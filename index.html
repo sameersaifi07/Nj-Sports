@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<!-- ══════════════════════════════════════════════════════════════
+     ALL CONTENT IS EDITED IN THE "CONFIG" BLOCK AT THE BOTTOM.
+     Search this file for:   const CONFIG = {
+     Never touch the CSS.
+     ══════════════════════════════════════════════════════════════ -->
+
+<title>NJ Sports — Cricket &amp; Football Community</title>
+<meta name="description" content="Live match threads for cricket and football. Real analysis, sourced news. Free on Telegram." />
+<meta property="og:title" content="NJ Sports — Cricket &amp; Football Community" />
+<meta property="og:description" content="Cricket and football, one community. Live threads, real analysis. Free to join." />
+<meta name="theme-color" content="#070B24" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Outfit:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --night:#070B24;
+  --white:#F2F4FF;
+  --mute:#8990C6;
+  --aqua:#22E4F0;      /* cricket */
+  --magenta:#FF3D8B;   /* football */
+
+  --line:rgba(242,244,255,.10);
+  --line-2:rgba(242,244,255,.18);
+  --grad:linear-gradient(100deg,var(--aqua),var(--magenta));
+  --grad-w:linear-gradient(100deg,var(--aqua),#B67BC0,var(--magenta),var(--aqua));
+
+  --accent:var(--aqua);          /* overridden per sport section */
+
+  --display:"Space Grotesk",system-ui,sans-serif;
+  --body:"Outfit",system-ui,sans-serif;
+  --mono:"Space Mono",ui-monospace,monospace;
+
+  --r:18px;
+  --r-lg:26px;
+  --wrap:640px;
+  --measure:34ch;
+  --pad:18px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  background:var(--night);color:var(--white);
+  font-family:var(--body);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;text-align:center;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:8px}
+.wrap{width:100%;max-width:var(--wrap);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+.measure{max-width:var(--measure);margin-left:auto;margin-right:auto}
+
+body::before{
+  content:"";position:fixed;inset:0;z-index:55;pointer-events:none;
+  background:radial-gradient(120% 80% at 50% 50%,transparent 55%,rgba(3,5,18,.5) 100%);
+}
+
+/* ── STATUS ─────────────────────────────────────────── */
+.status{position:sticky;top:0;z-index:40;background:rgba(7,11,36,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.status .wrap{display:flex;justify-content:center;align-items:center;gap:10px;height:44px}
+.status .s{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);display:flex;align-items:center;gap:8px}
+.status .s b{color:var(--white);font-weight:400}
+.status .sep{color:var(--line-2)}
+.bulb{width:6px;height:6px;border-radius:50%;background:var(--aqua);box-shadow:0 0 9px var(--aqua);animation:bl 2.2s ease-in-out infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.22}}
+
+/* ── HERO ───────────────────────────────────────────── */
+.hero{position:relative;padding:38px 0 42px;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(72px);pointer-events:none;z-index:0}
+.orb.a{width:300px;height:300px;background:rgba(34,228,240,.26);top:-120px;left:50%;margin-left:-40px}
+.orb.b{width:280px;height:280px;background:rgba(255,61,139,.22);top:130px;left:50%;margin-left:-240px}
+.hero .wrap{position:relative;z-index:2}
+
+.pill{
+  display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--white);border:1px solid var(--line-2);
+  padding:9px 16px;border-radius:999px;background:rgba(242,244,255,.05);backdrop-filter:blur(6px);
+}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--aqua);box-shadow:0 0 8px var(--aqua)}
+
+.nameset{margin-top:20px}
+.nameset h1{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(72px,22vw,132px);
+  line-height:.82;letter-spacing:-.06em;color:var(--white);
+}
+.nameset h1 em{
+  display:block;font-style:normal;
+  font-size:clamp(24px,7vw,40px);line-height:1.05;letter-spacing:-.035em;margin-top:.14em;
+  background:var(--grad-w);background-size:280% 100%;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:var(--aqua);
+  animation:hue 9s ease-in-out infinite;
+}
+@keyframes hue{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+.sub{margin-top:18px;font-size:16px;color:var(--mute);line-height:1.65}
+.sub strong{color:var(--white);font-weight:600}
+
+/* dual sport chips */
+.chips{display:flex;justify-content:center;gap:9px;margin-top:20px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  padding:9px 15px;border-radius:999px;border:1px solid;
+}
+.chip.ck{color:var(--aqua);border-color:rgba(34,228,240,.4);background:rgba(34,228,240,.08)}
+.chip.fb{color:var(--magenta);border-color:rgba(255,61,139,.4);background:rgba(255,61,139,.08)}
+.chip b{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+.orn{display:flex;align-items:center;justify-content:center;gap:12px;margin:24px auto 0;max-width:180px}
+.orn::before,.orn::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--line-2),transparent)}
+.orn span{width:5px;height:5px;transform:rotate(45deg);background:var(--grad)}
+
+/* ── COUNTDOWN ──────────────────────────────────────── */
+.board{margin-top:22px;border-radius:var(--r-lg);border:1px solid var(--line-2);background:rgba(242,244,255,.05);backdrop-filter:blur(10px);overflow:hidden}
+.board-top{display:flex;justify-content:center;align-items:center;gap:9px;padding:13px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.board-top .k,.board-top .c{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+.board-top .k{color:var(--mute)}
+.board-top .c{color:var(--white)}
+.board-top .sep{color:var(--line-2)}
+.sportbadge{
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 10px;border-radius:999px;color:var(--night);background:var(--accent);
+}
+.board-mid{padding:22px 14px 24px}
+
+.fixture{font-family:var(--display);font-weight:700;letter-spacing:-.035em;font-size:clamp(22px,6.4vw,31px);line-height:1.1;color:var(--white)}
+.fixture .v{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--aqua);margin:0 8px}
+
+.rings{margin-top:20px;display:flex;justify-content:center;gap:7px}
+.ring{position:relative;width:62px;height:62px;flex:0 0 auto}
+.ring svg{width:62px;height:62px;transform:rotate(-90deg);display:block}
+.ring .bg{fill:none;stroke:rgba(242,244,255,.10);stroke-width:4}
+.ring .fg{fill:none;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .35s linear}
+.ring .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.ring .n{font-family:var(--mono);font-weight:700;font-size:17px;font-variant-numeric:tabular-nums;color:var(--white);line-height:1}
+.ring .l{font-family:var(--mono);font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+
+.live{
+  display:inline-flex;align-items:center;gap:11px;margin-top:20px;
+  background:var(--grad);color:var(--night);border-radius:999px;padding:13px 26px;
+  font-family:var(--display);font-weight:700;font-size:clamp(21px,6.2vw,27px);letter-spacing:-.03em;
+}
+.live .dot{width:10px;height:10px;border-radius:50%;background:var(--night);animation:bl 1.5s ease-in-out infinite}
+
+/* ── CTA ────────────────────────────────────────────── */
+.cta{
+  position:relative;overflow:hidden;isolation:isolate;display:block;width:100%;border-radius:999px;
+  background:var(--grad-w);background-size:280% 100%;color:var(--night);
+  font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.025em;
+  padding:19px 22px;min-height:56px;animation:hue 9s ease-in-out infinite;
+  transition:transform .18s cubic-bezier(.2,.7,.3,1);
+  box-shadow:0 16px 44px -20px rgba(34,228,240,.85);
+}
+.cta::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--white);transform:translateY(101%);transition:transform .32s cubic-bezier(.2,.7,.3,1)}
+.cta:hover::before{transform:translateY(0)}
+.cta:hover{transform:translateY(-2px)}
+.cta:active{transform:translateY(0)}
+.cta-note{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--mute);margin-top:13px}
+.hero .cta{margin-top:22px}
+
+/* ── SPORT SECTIONS ─────────────────────────────────── */
+.sport{padding:48px 0 44px;position:relative}
+.sport::before{
+  content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:min(88%,420px);height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.5;
+}
+.sport .glow{
+  position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+  width:280px;height:200px;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0;
+  background:var(--accent);opacity:.13;
+}
+.sport .wrap{position:relative;z-index:2}
+
+.sec-label{
+  display:flex;align-items:center;justify-content:center;gap:13px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:12px;
+}
+.sec-label::before,.sec-label::after{content:"";height:1px;width:28px;background:linear-gradient(90deg,transparent,var(--line-2))}
+.sec-label::after{background:linear-gradient(270deg,transparent,var(--line-2))}
+
+h2{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(32px,9.5vw,48px);line-height:1;letter-spacing:-.05em;color:var(--white);
+}
+h2 em{font-style:normal;color:var(--accent)}
+
+.blurb{margin-top:14px;font-size:15.5px;color:var(--mute);line-height:1.65;max-width:var(--measure);margin-left:auto;margin-right:auto}
+
+/* per-sport image block — tinted with that sport's accent */
+.sshot{margin:24px auto 0}
+.sshot .frame{
+  position:relative;overflow:hidden;aspect-ratio:5/3;
+  border-radius:var(--r-lg);border:1px solid var(--line-2);
+  background:linear-gradient(150deg,#182270,#0A0F2E);
+}
+.sshot img{width:100%;height:100%;object-fit:cover}
+.sshot .ph{
+  position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:24px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;line-height:2.2;
+  color:var(--mute);text-transform:uppercase;
+}
+.sshot figcaption{
+  display:inline-block;margin-top:12px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--night);background:var(--accent);padding:7px 14px;border-radius:999px;white-space:nowrap;
+}
+
+/* fixture rail */
+.rail{display:flex;gap:11px;overflow-x:auto;padding:22px var(--pad) 6px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.card{
+  flex:0 0 min(76vw,206px);scroll-snap-align:center;
+  border-radius:var(--r);border:1px solid var(--line-2);
+  background:rgba(242,244,255,.05);padding:18px 16px;transition:border-color .2s ease,background .2s ease;
+}
+.card:hover{border-color:var(--accent);background:rgba(242,244,255,.09)}
+.card .c{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--night);background:var(--accent);padding:4px 10px;border-radius:999px;display:inline-block}
+.card .m{font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:-.035em;margin-top:12px;line-height:1.2}
+.card .d{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;color:var(--mute);text-transform:uppercase;margin-top:9px}
+
+/* what you get */
+.gets{margin-top:22px;display:grid;gap:11px}
+.get{border-radius:var(--r);border:1px solid var(--line);background:rgba(242,244,255,.04);padding:26px 20px 24px;position:relative;overflow:hidden}
+.get::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--accent)}
+.get .num{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:10px}
+.get h3{font-family:var(--display);font-weight:700;font-size:21px;letter-spacing:-.035em;margin-bottom:7px}
+.get p{color:var(--mute);font-size:15px;line-height:1.6;max-width:30ch;margin:0 auto}
+
+/* ── SHARED SECTIONS ────────────────────────────────── */
+.sec{padding:46px 0}
+.sec .sec-label{color:var(--mute)}
+
+.rules{margin-top:26px;list-style:none;display:grid;gap:10px}
+.rules li{background:rgba(242,244,255,.04);border:1px solid var(--line);border-radius:var(--r);padding:22px 18px;font-size:15px;line-height:1.55}
+.rules li em{
+  display:flex;align-items:center;justify-content:center;width:30px;height:30px;margin:0 auto 12px;border-radius:50%;
+  font-family:var(--mono);font-style:normal;font-size:12px;
+  color:var(--magenta);border:1px solid rgba(255,61,139,.35);background:rgba(255,61,139,.09);
+}
+.rules li span{display:block;max-width:32ch;margin:0 auto}
+
+.faq{margin-top:26px;display:grid;gap:9px}
+.qa{border:1px solid var(--line);border-radius:var(--r);background:rgba(242,244,255,.04);overflow:hidden}
+.qa summary{
+  list-style:none;cursor:pointer;position:relative;padding:19px 46px;min-height:56px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-weight:500;font-size:16.5px;letter-spacing:-.02em;
+}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::after{content:"+";position:absolute;right:18px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:19px;color:var(--aqua);line-height:1}
+.qa[open] summary::after{content:"\2212";color:var(--magenta)}
+.qa .a{padding:0 22px 22px;color:var(--mute);font-size:14.5px;line-height:1.65;max-width:34ch;margin:0 auto}
+
+.foot{padding:40px 0 36px;border-top:1px solid var(--line)}
+.disc{border-radius:var(--r);border:1px solid var(--line);padding:20px 18px;font-size:12.5px;line-height:1.7;color:var(--mute)}
+.disc b{color:var(--aqua);font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:10px;font-weight:400}
+.disc span{display:block;max-width:38ch;margin:0 auto}
+.copy{margin-top:24px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+
+.sticky{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  padding:11px var(--pad) calc(11px + env(safe-area-inset-bottom));
+  background:rgba(7,11,36,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);
+  transform:translateY(120%);transition:transform .36s cubic-bezier(.2,.7,.3,1);
+}
+.sticky.on{transform:translateY(0)}
+.sticky .cta{font-size:18px;padding:16px;min-height:52px;box-shadow:none;max-width:var(--wrap);margin:0 auto}
+
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.3,1)}
+.rv.in{opacity:1;transform:none}
+.ld{opacity:0;transform:translateY(14px);animation:up .8s cubic-bezier(.2,.7,.3,1) forwards}
+.ld:nth-child(1){animation-delay:.04s}
+.ld:nth-child(2){animation-delay:.11s}
+.ld:nth-child(3){animation-delay:.18s}
+.ld:nth-child(4){animation-delay:.25s}
+.ld:nth-child(5){animation-delay:.32s}
+.ld:nth-child(6){animation-delay:.39s}
+.ld:nth-child(7){animation-delay:.46s}
+.ld:nth-child(8){animation-delay:.53s}
+@keyframes up{to{opacity:1;transform:none}}
+
+@media(max-width:359px){
+  :root{--pad:14px}
+  .ring,.ring svg{width:56px;height:56px}
+  .ring .n{font-size:15px}
+  .rings{gap:5px}
+  .cta{font-size:18px}
+}
+@media(min-width:600px){
+  :root{--pad:28px;--measure:38ch}
+  .hero{padding:56px 0 54px}
+  .sport{padding:60px 0 54px}
+  .sec{padding:56px 0}
+  .gets{grid-template-columns:repeat(3,1fr)}
+  .ring,.ring svg{width:78px;height:78px}
+  .ring .n{font-size:21px}
+  .ring .l{font-size:8.5px}
+  .rings{gap:12px}
+  .rail{justify-content:center}
+  .sshot .frame{aspect-ratio:16/9}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .rv,.ld{opacity:1!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="status">
+  <div class="wrap">
+    <span class="s"><span class="bulb"></span><b id="stBrand">NJ Sports</b></span>
+    <span class="s sep">/</span>
+    <span class="s" id="stRight">Free · No paid tier</span>
+  </div>
+</div>
+
+<header class="hero">
+  <span class="orb a"></span><span class="orb b"></span>
+  <div class="wrap">
+    <span class="pill ld" id="eyebrow">Cricket &amp; Football</span>
+
+    <div class="nameset ld">
+      <h1><span id="brand">NJ</span><em id="brandAccent">Sports</em></h1>
+    </div>
+
+    <p class="sub measure ld" id="tagline"></p>
+
+    <div class="chips ld">
+      <span class="chip ck"><b></b>Cricket</span>
+      <span class="chip fb"><b></b>Football</span>
+    </div>
+
+    <div class="orn ld"><span></span></div>
+
+    <div class="board ld" aria-live="polite">
+      <div class="board-top">
+        <span class="sportbadge" id="boardSport">Cricket</span>
+        <span class="k" id="boardLabel">Next match thread</span>
+        <span class="sep">/</span>
+        <span class="c" id="boardComp"></span>
+      </div>
+      <div class="board-mid">
+        <p class="fixture" id="fixture">&mdash;</p>
+        <div id="clockHost"></div>
+      </div>
+    </div>
+
+    <a class="cta ld" id="ctaTop" href="#">Join on Telegram</a>
+    <p class="cta-note" id="ctaNote">Free · No payment · Leave anytime</p>
+  </div>
+</header>
+
+<main id="sports"></main>
+
+<section class="sec">
+  <div class="wrap">
+    <p class="sec-label rv">Ground rules</p>
+    <h2 class="rv">What we <em>will never</em> do</h2>
+    <ul class="rules" id="rules"></ul>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <p class="sec-label rv">Straight answers</p>
+    <h2 class="rv">Before you <em>tap join</em></h2>
+    <div class="faq" id="faq"></div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <a class="cta rv" id="ctaBottom" href="#">Join on Telegram</a>
+    <p class="cta-note rv" id="ctaNote2">Free · No payment · Leave anytime</p>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="disc"><b>Disclaimer</b><span id="disclaimer"></span></p>
+    <p class="copy" id="copy"></p>
+  </div>
+</footer>
+
+<div class="sticky" id="sticky">
+  <a class="cta" id="ctaSticky" href="#">Join on Telegram</a>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   ███  EDIT ONLY THIS BLOCK  ███
+   ══════════════════════════════════════════════════════════════════ */
+const CONFIG = {
+
+  /* 1 ── IDENTITY
+     Headline splits: brand is the big word, brandAccent is the
+     gradient line beneath it. Keep both short. */
+  brand:       "NJ",
+  brandAccent: "Sports",
+  eyebrow:     "Cricket & Football",
+  statusRight: "Free · No paid tier",
+  tagline:     "Two games, one group chat. <strong>Live threads for every big match</strong> — cricket and football — plus analysis that goes past the highlights.",
+
+  /* 2 ── TELEGRAM LINK */
+  telegram: "https://t.me/+iWniL7F8pa5hMmI1",
+  ctaLabel: "Join on Telegram",
+  ctaNote:  "Free · No payment · Leave anytime",
+
+  /* 3 ── THE TWO SPORTS
+     Order here = order on the page. Cricket is first.
+     Each sport has its own accent colour, fixtures and three points.
+     Kickoff format: "YYYY-MM-DDTHH:MM" (24-hour), your local time.
+     The countdown picks the next match across BOTH sports and rolls
+     forward on its own, so it never resets on refresh. */
+  sports: [
+    {
+      name:   "Cricket",
+      accent: "#22E4F0",
+      label:  "First innings",
+      h2a:    "Cricket, ",
+      h2b:    "ball by ball",
+      blurb:  "Every India match, both Ashes sides, the IPL and the big ICC nights. Toss to last over.",
+      /* upload cricket.jpg beside index.html — filename must match exactly */
+      image:    "Cricket.jpg",
+      imageAlt: "Cricket match",
+      imageTag: "Match day",
+      fixtures: [
+        { home:"India",      away:"Australia",   comp:"ODI Series", kickoff:"2026-08-29T09:30" },
+        { home:"England",    away:"Pakistan",    comp:"Test",       kickoff:"2026-08-31T15:30" },
+        { home:"Mumbai",     away:"Chennai",     comp:"IPL",        kickoff:"2026-09-03T19:30" },
+        { home:"South Africa",away:"New Zealand",comp:"T20I",       kickoff:"2026-09-06T17:00" }
+      ],
+      gets: [
+        { title:"Toss to last over",  body:"Playing XI the moment it drops, then live commentary through both innings." },
+        { title:"Pitch and matchups", body:"What the surface is doing, which bowler troubles which batter, and why the plan changed." },
+        { title:"Scorecards that talk",body:"Not just the numbers — strike rates, phases, and what actually decided the game." }
+      ]
+    },
+    {
+      name:   "Football",
+      accent: "#FF3D8B",
+      label:  "Second half",
+      h2a:    "Football, ",
+      h2b:    "ninety minutes",
+      blurb:  "Premier League, LaLiga, Serie A and ISL. Team news an hour before, reaction until the whistle.",
+      /* upload football.jpg beside index.html — filename must match exactly */
+      image:    "football.jpg",
+      imageAlt: "Football match",
+      imageTag: "Match night",
+      fixtures: [
+        { home:"Arsenal",     away:"Liverpool",   comp:"Premier League", kickoff:"2026-08-30T21:00" },
+        { home:"Real Madrid", away:"Barcelona",   comp:"LaLiga",         kickoff:"2026-09-01T00:30" },
+        { home:"Mohun Bagan", away:"East Bengal", comp:"ISL",            kickoff:"2026-09-04T19:30" },
+        { home:"Inter",       away:"Milan",       comp:"Serie A",        kickoff:"2026-09-07T00:15" }
+      ],
+      gets: [
+        { title:"Team news first",     body:"Line-ups an hour before kickoff, with what the change actually means for the shape." },
+        { title:"Tactics, not takes",  body:"Why the press broke. Where the goal came from. Who ran the midfield." },
+        { title:"Transfers with receipts",body:"Every claim carries the journalist's name and the link. Unsourced doesn't get posted." }
+      ]
+    }
+  ],
+  liveWindowMins: 240,   /* cricket runs long — 4 hours */
+
+  /* 4 ── GROUND RULES (your trust block) */
+  rules: [
+    "No tips, no odds, no predictions. Not once, not ever.",
+    "Nobody from this channel will DM you about money.",
+    "Every news post carries its original source link.",
+    "Free forever. No paid tier, no upsell, no VIP group."
+  ],
+
+  /* 5 ── FAQ (objection handling — this is where joins are won) */
+  faq: [
+    { q:"Is it actually free?",       a:"Yes. There is no paid tier and never will be. If anyone offers you a premium version of this channel, it isn't us." },
+    { q:"Both sports in one group?",  a:"Yes, but match threads are tagged, so you can mute what you don't follow and still get the sport you came for." },
+    { q:"Do you post betting tips?",  a:"No. No odds, tips or predictions of any kind, and we remove anyone who posts them." },
+    { q:"How busy does it get?",      a:"Quiet between matches, loud on match nights. Mute it and check in when a game you care about is on." },
+    { q:"Can I leave whenever?",      a:"One tap, no questions. Nobody messages you afterwards." }
+  ],
+
+  /* 6 ── LEGAL */
+  disclaimer: "This channel shares cricket and football news, analysis and general discussion for fans. It does not promote, facilitate or advertise betting, gambling or any online money game, and shares no odds, tips or predictions of any kind. Content is for information and entertainment only. This is an independent, fan-run community, not affiliated with, endorsed by or connected to any player, club, league or governing body.",
+  copyright:  "© 2026 NJ Sports"
+};
+
+/* ══════════════════════════════════════════════════════════════════
+   ███  DO NOT EDIT BELOW THIS LINE  ███
+   ══════════════════════════════════════════════════════════════════ */
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var pad = function(n){ return String(n).padStart(2,"0"); };
+  var esc = function(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); };
+
+  document.title = CONFIG.brand + " " + CONFIG.brandAccent + " — Cricket & Football Community";
+  $("brand").textContent       = CONFIG.brand;
+  $("brandAccent").textContent = CONFIG.brandAccent;
+  $("stBrand").textContent     = CONFIG.brand + " " + CONFIG.brandAccent;
+  $("stRight").textContent     = CONFIG.statusRight;
+  $("eyebrow").textContent     = CONFIG.eyebrow;
+  $("tagline").innerHTML       = CONFIG.tagline;
+  $("disclaimer").textContent  = CONFIG.disclaimer;
+  $("copy").textContent        = CONFIG.copyright;
+  $("ctaNote").textContent     = CONFIG.ctaNote;
+  $("ctaNote2").textContent    = CONFIG.ctaNote;
+
+  ["ctaTop","ctaBottom","ctaSticky"].forEach(function(id){
+    var el = $(id);
+    el.href = CONFIG.telegram; el.textContent = CONFIG.ctaLabel;
+    el.target = "_blank"; el.rel = "noopener";
+  });
+
+  var fmtD = new Intl.DateTimeFormat(undefined,{weekday:"short",day:"2-digit",month:"short"});
+  var fmtT = new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit"});
+
+  /* per-sport image block */
+  function shot(sp){
+    var cap = '<figcaption>'+esc(sp.imageTag||sp.name)+'</figcaption>';
+    var inner = sp.image
+      ? '<img src="'+esc(sp.image)+'" alt="'+esc(sp.imageAlt||sp.name)+'" loading="lazy">'
+      : '<div class="ph">Add '+esc(sp.name.toLowerCase())+'.jpg beside index.html<br>then set image in CONFIG</div>';
+    return '<figure class="sshot rv"><div class="frame">'+inner+'</div>'+cap+'</figure>';
+  }
+
+  /* build one section per sport, in CONFIG order */
+  var html = "", all = [];
+  (CONFIG.sports||[]).forEach(function(sp){
+    var fx = (sp.fixtures||[])
+      .map(function(f){ var o = Object.assign({},f); o.t = new Date(f.kickoff); o.sport = sp.name; o.accent = sp.accent; return o; })
+      .filter(function(f){ return !isNaN(f.t); })
+      .sort(function(a,b){ return a.t - b.t; });
+    all = all.concat(fx);
+
+    var cards = fx.map(function(f){
+      return '<div class="card"><span class="c">'+esc(f.comp)+'</span>'+
+        '<p class="m">'+esc(f.home)+'<br>v '+esc(f.away)+'</p>'+
+        '<p class="d">'+fmtD.format(f.t)+' &middot; '+fmtT.format(f.t)+'</p></div>';
+    }).join("");
+
+    var gets = (sp.gets||[]).map(function(g,i){
+      return '<div class="get rv"><span class="num">'+pad(i+1)+'</span><h3>'+esc(g.title)+'</h3><p>'+esc(g.body)+'</p></div>';
+    }).join("");
+
+    html +=
+      '<section class="sport" style="--accent:'+sp.accent+'">'+
+        '<span class="glow"></span>'+
+        '<div class="wrap">'+
+          '<p class="sec-label rv">'+esc(sp.label)+'</p>'+
+          '<h2 class="rv">'+esc(sp.h2a)+'<em>'+esc(sp.h2b)+'</em></h2>'+
+          '<p class="blurb rv">'+esc(sp.blurb)+'</p>'+
+          shot(sp)+
+        '</div>'+
+        '<div class="rail">'+cards+'</div>'+
+        '<div class="wrap"><div class="gets">'+gets+'</div></div>'+
+      '</section>';
+  });
+  $("sports").innerHTML = html;
+
+  $("rules").innerHTML = CONFIG.rules.map(function(r){
+    return '<li class="rv"><em>&#10005;</em><span>'+esc(r)+'</span></li>';
+  }).join("");
+
+  $("faq").innerHTML = (CONFIG.faq||[]).map(function(f){
+    return '<details class="qa rv"><summary>'+esc(f.q)+'</summary><p class="a">'+esc(f.a)+'</p></details>';
+  }).join("");
+
+  /* countdown across BOTH sports */
+  all.sort(function(a,b){ return a.t - b.t; });
+  var C = 2 * Math.PI * 30;
+  var liveMs = (CONFIG.liveWindowMins || 240) * 60000;
+
+  function current(){
+    var now = Date.now();
+    for(var i=0;i<all.length;i++){
+      var k = all[i].t.getTime();
+      if(now < k)          return {f:all[i], state:"pre",  ms:k-now};
+      if(now < k + liveMs) return {f:all[i], state:"live", ms:0};
+    }
+    return null;
+  }
+
+  function ring(n,label,frac,color){
+    var off = C * (1 - Math.max(0,Math.min(1,frac)));
+    return '<div class="ring"><svg viewBox="0 0 70 70">'+
+      '<circle class="bg" cx="35" cy="35" r="30"></circle>'+
+      '<circle class="fg" cx="35" cy="35" r="30" stroke="'+color+'" '+
+      'stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'"></circle>'+
+      '</svg><span class="val"><span class="n">'+pad(n)+'</span><span class="l">'+label+'</span></span></div>';
+  }
+
+  function render(){
+    var c = current(), host = $("clockHost"), board = $("boardSport");
+    if(!c){
+      board.style.display = "none";
+      $("boardLabel").textContent = "Fixtures";
+      $("boardComp").textContent  = "TBA";
+      $("fixture").textContent    = "Next fixtures posted in the channel";
+      host.innerHTML = ""; return;
+    }
+    board.style.display = "";
+    board.textContent = c.f.sport;
+    board.style.background = c.f.accent;
+    $("boardComp").textContent = c.f.comp;
+    $("fixture").innerHTML = esc(c.f.home)+'<span class="v">v</span>'+esc(c.f.away);
+
+    if(c.state === "live"){
+      $("boardLabel").textContent = "Match thread";
+      host.innerHTML = '<span class="live"><span class="dot"></span>Live now</span>';
+      return;
+    }
+    $("boardLabel").textContent = "Next match thread";
+    var s = Math.floor(c.ms/1000);
+    var d = Math.floor(s/86400), h = Math.floor(s%86400/3600),
+        m = Math.floor(s%3600/60), sec = s%60;
+
+    host.innerHTML = '<div class="rings">'+
+      ring(d,"days", Math.min(d,7)/7, c.f.accent)+
+      ring(h,"hrs",  h/24,            c.f.accent)+
+      ring(m,"min",  m/60,            "#B67BC0")+
+      ring(sec,"sec",sec/60,          "#FF3D8B")+
+    '</div>';
+  }
+  render();
+  setInterval(render,1000);
+
+  var io = new IntersectionObserver(function(e){
+    e.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target); } });
+  },{threshold:.12,rootMargin:"0px 0px -40px 0px"});
+  document.querySelectorAll(".rv").forEach(function(el){ io.observe(el); });
+
+  var sticky = $("sticky"), anchor = $("ctaTop");
+  new IntersectionObserver(function(e){
+    sticky.classList.toggle("on", !e[0].isIntersecting && e[0].boundingClientRect.top < 0);
+  },{threshold:0}).observe(anchor);
+})();
+</script>
+</body>
+</html>

@@ -536,10 +536,25 @@ const CONFIG = {
   $("ctaNote").textContent     = CONFIG.ctaNote;
   $("ctaNote2").textContent    = CONFIG.ctaNote;
 
+  /* Pixel: fire a Lead event on every "Join on Telegram" tap.
+     This is the real conversion action on this page — without it,
+     the pixel only ever reports PageView, which gives Meta nothing
+     to optimize delivery against. */
+  function trackJoinClick(sourceId){
+    if (typeof fbq === "function") {
+      fbq("track", "Lead", {
+        content_name: CONFIG.brand + " " + CONFIG.brandAccent,
+        content_category: "Telegram Join",
+        cta_position: sourceId
+      });
+    }
+  }
+
   ["ctaTop","ctaBottom","ctaSticky"].forEach(function(id){
     var el = $(id);
     el.href = CONFIG.telegram; el.textContent = CONFIG.ctaLabel;
     el.target = "_blank"; el.rel = "noopener";
+    el.addEventListener("click", function(){ trackJoinClick(id); });
   });
 
   var fmtD = new Intl.DateTimeFormat(undefined,{weekday:"short",day:"2-digit",month:"short"});
